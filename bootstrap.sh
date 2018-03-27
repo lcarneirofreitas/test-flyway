@@ -15,9 +15,6 @@ export DEBIAN_FRONTEND=noninteractive && \
 apt-get -q -y install mysql-server && \
 echo 'show databases;' | mysql -uroot && \
 
-# Copy script migration database mysql
-cp /vagrant/sql/*.sql /opt/flyway-5.0.7/sql/ && \
-
 # Change root password mysql
 echo "update user set authentication_string=PASSWORD('root') where User='root';" | mysql -uroot mysql && \
 echo "update user set plugin='mysql_native_password';" | mysql -uroot mysql && \
@@ -25,8 +22,8 @@ echo "flush privileges" | mysql -uroot mysql && \
 echo "create database teramanagement" | mysql -uroot -proot && \
 
 # Migrate database mysql db teramanagement 
-sudo flyway -user=root -password=root -url=jdbc:mysql://localhost:3306/teramanagement migrate && \
-sudo flyway -user=root -password=root -url=jdbc:mysql://localhost:3306/teramanagement info && \
+sudo flyway -user=root -password=root -locations=filesystem:/vagrant/sql-migrations -url=jdbc:mysql://localhost:3306/teramanagement migrate && \
+sudo flyway -user=root -password=root -locations=filesystem:/vagrant/sql-migrations -url=jdbc:mysql://localhost:3306/teramanagement info && \
 
 # finish
 echo "OK"
